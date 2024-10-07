@@ -1,18 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
-public class SceneLoader : MonoBehaviour
+public class SceneLoader : Singleton<SceneLoader>
 {
-    // Start is called before the first frame update
-    void Start()
+    
+    public override void Init()
     {
         
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void LoadSceneAsync(string scene, bool activateOnLoad){
+        var handle = Addressables.LoadSceneAsync(scene, LoadSceneMode.Single, activateOnLoad);
     }
 }
