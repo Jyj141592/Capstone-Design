@@ -12,12 +12,14 @@ public enum InputMap {
 public class InputManager : Singleton<InputManager>
 {
     private InputActionAsset inputActions;
+    private InputMap currentActionMap = InputMap.InGame;
     public override void Init()
     {
         var handle = Addressables.LoadAssetAsync<InputActionAsset>("InputAsset");
         handle.WaitForCompletion();
         if(handle.Status == AsyncOperationStatus.Succeeded){
             inputActions = handle.Result;
+            inputActions.FindActionMap("InGame").Enable();
         }
         else{
             // Error
@@ -59,5 +61,34 @@ public class InputManager : Singleton<InputManager>
             a.performed -= callback;
             a.canceled -= callback;
         }
+    }
+
+    public void ChangeActionMap(InputMap map){
+        if(map == currentActionMap){
+            return;
+        }
+        switch(map){
+            case InputMap.UI:
+                inputActions.FindActionMap("UI").Enable();
+                break;
+            case InputMap.InGame:
+                inputActions.FindActionMap("InGame").Enable();
+                break;
+            case InputMap.Editor:
+                inputActions.FindActionMap("Editor").Enable();
+                break;
+        }
+        switch(currentActionMap){
+            case InputMap.UI:
+                inputActions.FindActionMap("UI").Disable();
+                break;
+            case InputMap.InGame:
+                inputActions.FindActionMap("InGame").Disable();
+                break;
+            case InputMap.Editor:
+                inputActions.FindActionMap("Editor").Disable();
+                break;
+        }
+        currentActionMap = map;
     }
 }
