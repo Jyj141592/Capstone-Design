@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     } = false;
     private Vector3 moveDir = Vector3.zero;
     private bool isHold = false;
+    private bool isPush = false;
 
     // Hashs
     private int haltHash;
@@ -29,6 +30,8 @@ public class PlayerController : MonoBehaviour
     private int isAirHash;
     private int jumpHash;
     private int holdHash;
+    private int stackHash;
+    private int pushHash;
     private int throwHash;
 
     // Camera
@@ -37,6 +40,7 @@ public class PlayerController : MonoBehaviour
 
     // Objects
     public GameObject handPos;
+    private BoxCollider handCol;
     public Transform hand;
     private Collider hold = null;
     void Start()
@@ -47,6 +51,7 @@ public class PlayerController : MonoBehaviour
         InputManager.instance.RegisterCallback(InputMap.InGame,"Jump",OnJump);
         InputManager.instance.RegisterCallback(InputMap.InGame, "Hold", OnHold);
         InputManager.instance.RegisterCallback(InputMap.InGame, "Throw", OnThrow);
+        InputManager.instance.RegisterCallback(InputMap.InGame, "Touch", OnTouch);
 
         // Components
         animator = GetComponent<Animator>();
@@ -58,36 +63,46 @@ public class PlayerController : MonoBehaviour
         isAirHash = Animator.StringToHash("isAir");
         jumpHash = Animator.StringToHash("jump");
         holdHash = Animator.StringToHash("hold");
+        stackHash = Animator.StringToHash("stack");
+        pushHash = Animator.StringToHash("push");
         throwHash = Animator.StringToHash("throw");
+
+        handCol = handPos.GetComponent<BoxCollider>();
     }
 
     private void Update() {
         if(isMovable && (move.x != 0 || move.y != 0)){
-            
             Vector3 forward = transform.position - cameraPos;
             forward.y = 0;
             forward.Normalize();
             Vector3 right = Vector3.Cross(up, forward);
             Vector3 m = forward * move.y + right * move.x;
             m.Normalize();
-            transform.forward = m;
 
-            if(m != moveDir){
-                float l = Vector3.Dot(rigid.velocity, moveDir);
-                if(l < maxSpeed){
-                    rigid.velocity = rigid.velocity - moveDir * l;
-                }
-                else{
-                    rigid.velocity = rigid.velocity - moveDir * maxSpeed;
-                }
+            if(isPush){
+                
             }
+            else{
+                
+                transform.forward = m;
+
+                if(m != moveDir){
+                    float l = Vector3.Dot(rigid.velocity, moveDir);
+                    if(l < maxSpeed){
+                        rigid.velocity = rigid.velocity - moveDir * l;
+                    }
+                    else{
+                        rigid.velocity = rigid.velocity - moveDir * maxSpeed;
+                    }
+                }
 
 
-            float len = Vector3.Dot(rigid.velocity, m);
-            if(len < maxSpeed){
-                rigid.velocity += (maxSpeed - len) * m;
+                float len = Vector3.Dot(rigid.velocity, m);
+                if(len < maxSpeed){
+                    rigid.velocity += (maxSpeed - len) * m;
+                }
+                moveDir = m;
             }
-            moveDir = m;
         }
     }
 
@@ -108,6 +123,7 @@ public class PlayerController : MonoBehaviour
             InputManager.instance.RemoveCallback(InputMap.InGame,"Jump",OnJump);
             InputManager.instance.RemoveCallback(InputMap.InGame, "Hold", OnHold);
             InputManager.instance.RemoveCallback(InputMap.InGame, "Throw", OnThrow);
+            InputManager.instance.RemoveCallback(InputMap.InGame, "Touch", OnTouch);
         }
     }
 
@@ -181,8 +197,23 @@ public class PlayerController : MonoBehaviour
                 // hold.gameObject.transform.SetParent(null);
                 // hold.attachedRigidbody.isKinematic = false;
                 // hold = null;
+                var colls = Physics.OverlapSphere(handPos.transform.position, 0.7f, ~LayerMask.GetMask("Player"));
+                if(colls.Length > 0){
+                    animator.SetBool(stackHash, true);
+                    ClearHold();
+                }
+                else{
+                    animator.SetBool(stackHash, false);
+                }
                 isHold = false;
                 animator.SetBool(holdHash, false);
+                handCol.enabled = false;
+            }
+            else if(isPush){
+                isPush = false;
+                hold = null;
+                animator.SetBool(pushHash, false);
+                handCol.enabled = false;
             }
             else{
                 var colls = Physics.OverlapSphere(handPos.transform.position, 0.7f, LayerMask.GetMask("Cube"));
@@ -190,9 +221,21 @@ public class PlayerController : MonoBehaviour
                     isHold = true;
                     animator.SetBool(holdHash, true);
                     hold = colls[0];
+                    handCol.enabled = true;
+                    handCol.center = new Vector3(0,1.5f, -1.0f);
                     // colls[0].attachedRigidbody.isKinematic = true;
                     // colls[0].gameObject.transform.SetParent(hand.transform);
                     // colls[0].gameObject.transform.localPosition = Vector3.zero;
+                }
+                else{
+                    colls = Physics.OverlapSphere(handPos.transform.position, 0.7f, LayerMask.GetMask("Pushable"));
+                    if(colls.Length > 0){
+                        isPush = true;
+                        animator.SetBool(pushHash, true);
+                        hold = colls[0];
+                        handCol.enabled = true;
+                        handCol.center = new Vector3(0, 1.5f, -2.0f);
+                    }
                 }
             }
             
@@ -206,6 +249,26 @@ public class PlayerController : MonoBehaviour
         }
     }
     public void OnPush(InputAction.CallbackContext context){
+        
+    }
+    public void OnTouch(InputAction.CallbackContext context){
+        var touch = Touchscreen.current.primaryTouch;
+
+            if (touch.press.isPressed && touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+            {
+                // 터치가 처음 시작될 때
+                Debug.Log($"터치 시작: {touch.position.ReadValue()}");
+            }
+            // else if (touch.press.isPressed && touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved)
+            // {
+            //     // 터치가 움직이는 중
+            //     Debug.Log($"터치 중: {touch.position.ReadValue()}");
+            // }
+            else if (!touch.press.isPressed && touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Ended)
+            {
+                // 터치가 종료될 때
+                Debug.Log("터치 종료");
+            }
         
     }
 }
