@@ -15,12 +15,13 @@ public class PlayerController : MonoBehaviour
     }
     private Vector2 move = Vector2.zero;
     private float maxSpeed = 10.0f;
+    private float turnSpeed = 500.0f;
     private bool isAir = false;
     private Vector3 up = Vector3.up;
     public bool inverted{
         get; private set;
     } = false;
-    private Vector3 moveDir = Vector3.zero;
+    private Vector3 moveDir = Vector3.forward;
     private bool isHold = false;
     private bool isPush = false;
 
@@ -57,6 +58,9 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
 
+        // Status
+        moveDir = transform.forward;
+
         // Hashs
         haltHash = Animator.StringToHash("halt");
         moveHash = Animator.StringToHash("move");
@@ -72,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update() {
         if(isMovable && (move.x != 0 || move.y != 0)){
-            Vector3 forward = transform.position - cameraPos;
+            Vector3 forward = cameraLook;//transform.position - cameraPos;
             forward.y = 0;
             forward.Normalize();
             Vector3 right = Vector3.Cross(up, forward);
@@ -83,8 +87,37 @@ public class PlayerController : MonoBehaviour
                 
             }
             else{
-                
-                transform.forward = m;
+                //transform.forward = m;
+                //float angle = Mathf.Acos(m.z) * Mathf.Rad2Deg;
+                float angle = Mathf.Atan2(m.x, m.z) * Mathf.Rad2Deg;
+                float currentAngle = transform.eulerAngles.y;
+                if(angle != transform.eulerAngles.y){
+                    float deltaAngle = Mathf.DeltaAngle(currentAngle, angle);
+                    float rotationStep = turnSpeed * Time.deltaTime;
+                    if (Mathf.Abs(deltaAngle) < rotationStep){
+                        currentAngle = angle; 
+                    }
+                    else{
+                        currentAngle += Mathf.Sign(deltaAngle) * rotationStep; 
+                    }
+
+                    // float rot;
+                    // if(Mathf.DeltaAngle(transform.eulerAngles.y, angle) < 0){
+                    //     rot = transform.eulerAngles.y - turnSpeed * Time.deltaTime;
+                    //     if(rot < angle) rot = angle;
+                    //     if(rot < 0) rot += 360;
+                    // }
+                    // else{
+                    //     rot = transform.eulerAngles.y + turnSpeed * Time.deltaTime;
+                    //     if(rot > angle) rot = angle;
+                    //     if(rot >= 360) rot -= 360;
+                    // }
+                    //Debug.Log("y: " + transform.rotation.y + ", rot: " + rot);
+
+                    transform.rotation = Quaternion.Euler(transform.rotation.x, currentAngle, transform.rotation.z);
+
+                }
+                m = transform.forward;
 
                 if(m != moveDir){
                     float l = Vector3.Dot(rigid.velocity, moveDir);

@@ -14,7 +14,7 @@ public class CameraFollow : MonoBehaviour
     public float middleRadius = 10.0f;
     public float bottomRadius = 1.0f;
     public float sensitive = 1.0f;
-    private float topAngle = 89.0f;
+    private float topAngle = 80.0f;
     private float middleAngle = 0.0f;
     private float bottomAngle = -50.0f;
     private PlayerController controller;
