@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
                     // }
                     //Debug.Log("y: " + transform.rotation.y + ", rot: " + rot);
 
-                    transform.rotation = Quaternion.Euler(transform.rotation.x, currentAngle, transform.rotation.z);
+                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, currentAngle, transform.eulerAngles.z);
 
                 }
                 m = transform.forward;
@@ -158,6 +158,13 @@ public class PlayerController : MonoBehaviour
             InputManager.instance.RemoveCallback(InputMap.InGame, "Throw", OnThrow);
             InputManager.instance.RemoveCallback(InputMap.InGame, "Touch", OnTouch);
         }
+    }
+
+    private void InvertUp(){
+        inverted = !inverted;
+        up = -up;
+        if(inverted) transform.Rotate(0, 0, 180);
+        else transform.Rotate(0,0,-180);
     }
 
     public void SetHold(){
@@ -224,7 +231,10 @@ public class PlayerController : MonoBehaviour
         }
     }
     public void OnHold(InputAction.CallbackContext context){
-        if(isMovable && context.started){
+        if(context.started){
+            InvertUp();
+        }
+        if(isMovable && context.started && !isAir){
             //animator.SetBool(holdHash, !animator.GetBool(holdHash));
             if(isHold){
                 // hold.gameObject.transform.SetParent(null);

@@ -20,11 +20,14 @@ public class CameraFollow : MonoBehaviour
     private PlayerController controller;
     private float angleY = 0.0f;
     private float angleX = 0.0f;
+    private bool inverted = false;
+    private float rotX = 0;
     void Start()
     {
         controller = follow.GetComponent<PlayerController>();
         UpdatePosition();
         InputManager.instance.RegisterCallback(InputMap.InGame, "ViewRotate", OnViewRotate);
+        InputManager.instance.RegisterCallback(InputMap.InGame, "Hold", OnInvert);
     }
     void Update()
     {
@@ -33,11 +36,12 @@ public class CameraFollow : MonoBehaviour
     private void OnDestroy() {
         if(InputManager.instance != null){
             InputManager.instance.RemoveCallback(InputMap.InGame, "ViewRotate", OnViewRotate);
+            InputManager.instance.RemoveCallback(InputMap.InGame, "Hold", OnInvert);
         }
     }
     void UpdatePosition(){
         Vector3 pos = new Vector3(-Mathf.Sin(angleY), 0, -Mathf.Cos(angleY));
-        transform.rotation = Quaternion.Euler(0, angleY, 0);
+        transform.rotation = Quaternion.Euler(rotX, angleY, 0);
         // transform.forward = -pos;
         // transform.up = Vector3.down;
 
@@ -64,9 +68,20 @@ public class CameraFollow : MonoBehaviour
     void OnViewRotate(InputAction.CallbackContext context){
         if(context.performed){
             Vector2 value = context.ReadValue<Vector2>();
-            angleY += value.x * 0.3f * sensitive;
+            float inv = inverted ? -1 : 1;
+            angleY += value.x * 0.3f * sensitive * inv;
             angleX -= value.y * 0.3f * sensitive;
             angleX = Mathf.Clamp(angleX, bottomAngle, topAngle);
         }
+    }
+    void OnInvert(InputAction.CallbackContext context){
+        if(context.started){
+            InvertCameraUp();
+        }
+    }
+    void InvertCameraUp(){
+        inverted = !inverted;
+        if(inverted) rotX = 180;
+        else rotX = 0;
     }
 }
