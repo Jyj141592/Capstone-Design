@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update() {
         if(isMovable && (move.x != 0 || move.y != 0)){
-            Vector3 forward = cameraLook;//transform.position - cameraPos;
+            Vector3 forward = cameraLook;
             forward.y = 0;
             forward.Normalize();
             Vector3 right = Vector3.Cross(up, forward);
@@ -87,8 +87,6 @@ public class PlayerController : MonoBehaviour
                 
             }
             else{
-                //transform.forward = m;
-                //float angle = Mathf.Acos(m.z) * Mathf.Rad2Deg;
                 float angle = Mathf.Atan2(m.x, m.z) * Mathf.Rad2Deg;
                 float currentAngle = transform.eulerAngles.y;
                 if(angle != transform.eulerAngles.y){
@@ -100,19 +98,6 @@ public class PlayerController : MonoBehaviour
                     else{
                         currentAngle += Mathf.Sign(deltaAngle) * rotationStep; 
                     }
-
-                    // float rot;
-                    // if(Mathf.DeltaAngle(transform.eulerAngles.y, angle) < 0){
-                    //     rot = transform.eulerAngles.y - turnSpeed * Time.deltaTime;
-                    //     if(rot < angle) rot = angle;
-                    //     if(rot < 0) rot += 360;
-                    // }
-                    // else{
-                    //     rot = transform.eulerAngles.y + turnSpeed * Time.deltaTime;
-                    //     if(rot > angle) rot = angle;
-                    //     if(rot >= 360) rot -= 360;
-                    // }
-                    //Debug.Log("y: " + transform.rotation.y + ", rot: " + rot);
 
                     transform.rotation = Quaternion.Euler(transform.eulerAngles.x, currentAngle, transform.eulerAngles.z);
 
@@ -231,15 +216,8 @@ public class PlayerController : MonoBehaviour
         }
     }
     public void OnHold(InputAction.CallbackContext context){
-        if(context.started){
-            InvertUp();
-        }
         if(isMovable && context.started && !isAir){
-            //animator.SetBool(holdHash, !animator.GetBool(holdHash));
             if(isHold){
-                // hold.gameObject.transform.SetParent(null);
-                // hold.attachedRigidbody.isKinematic = false;
-                // hold = null;
                 var colls = Physics.OverlapSphere(handPos.transform.position, 0.7f, ~LayerMask.GetMask("Player"));
                 if(colls.Length > 0){
                     animator.SetBool(stackHash, true);
@@ -266,9 +244,6 @@ public class PlayerController : MonoBehaviour
                     hold = colls[0];
                     handCol.enabled = true;
                     handCol.center = new Vector3(0,1.5f, -1.0f);
-                    // colls[0].attachedRigidbody.isKinematic = true;
-                    // colls[0].gameObject.transform.SetParent(hand.transform);
-                    // colls[0].gameObject.transform.localPosition = Vector3.zero;
                 }
                 else{
                     colls = Physics.OverlapSphere(handPos.transform.position, 0.7f, LayerMask.GetMask("Pushable"));
@@ -299,17 +274,14 @@ public class PlayerController : MonoBehaviour
 
             if (touch.press.isPressed && touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
             {
-                // 터치가 처음 시작될 때
                 Debug.Log($"터치 시작: {touch.position.ReadValue()}");
             }
             // else if (touch.press.isPressed && touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved)
             // {
-            //     // 터치가 움직이는 중
             //     Debug.Log($"터치 중: {touch.position.ReadValue()}");
             // }
             else if (!touch.press.isPressed && touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Ended)
             {
-                // 터치가 종료될 때
                 Debug.Log("터치 종료");
             }
         

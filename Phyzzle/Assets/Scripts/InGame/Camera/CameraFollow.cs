@@ -27,7 +27,6 @@ public class CameraFollow : MonoBehaviour
         controller = follow.GetComponent<PlayerController>();
         UpdatePosition();
         InputManager.instance.RegisterCallback(InputMap.InGame, "ViewRotate", OnViewRotate);
-        InputManager.instance.RegisterCallback(InputMap.InGame, "Hold", OnInvert);
     }
     void Update()
     {
@@ -36,7 +35,6 @@ public class CameraFollow : MonoBehaviour
     private void OnDestroy() {
         if(InputManager.instance != null){
             InputManager.instance.RemoveCallback(InputMap.InGame, "ViewRotate", OnViewRotate);
-            InputManager.instance.RemoveCallback(InputMap.InGame, "Hold", OnInvert);
         }
     }
     void UpdatePosition(){
@@ -72,11 +70,6 @@ public class CameraFollow : MonoBehaviour
             angleY += value.x * 0.3f * sensitive * inv;
             angleX -= value.y * 0.3f * sensitive;
             angleX = Mathf.Clamp(angleX, bottomAngle, topAngle);
-        }
-    }
-    void OnInvert(InputAction.CallbackContext context){
-        if(context.started){
-            InvertCameraUp();
         }
     }
     void InvertCameraUp(){
