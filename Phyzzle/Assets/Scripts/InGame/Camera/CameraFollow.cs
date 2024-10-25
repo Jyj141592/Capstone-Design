@@ -17,14 +17,14 @@ public class CameraFollow : MonoBehaviour
     private float topAngle = 80.0f;
     private float middleAngle = 0.0f;
     private float bottomAngle = -50.0f;
-    private PlayerController controller;
+    private ThirdPerson.PlayerController controller;
     private float angleY = 0.0f;
     private float angleX = 0.0f;
     private bool inverted = false;
     private float rotX = 0;
     void Start()
     {
-        controller = follow.GetComponent<PlayerController>();
+        controller = follow.GetComponent<ThirdPerson.PlayerController>();
         UpdatePosition();
         InputManager.instance.RegisterCallback(InputMap.InGame, "ViewRotate", OnViewRotate);
     }

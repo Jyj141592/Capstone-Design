@@ -1,26 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    
-    void Start()
-    {
-        
-    }
+    private float topAngle = 89.0f;
+    private float bottomAngle = -89.0f;
+    private float angleX = 0.0f;
 
-    
-    void Update()
-    {
-        
-    }
-
-    private void UpdatePosition(){
-
-    }
-
-    public void ViewRotate(float angle){
-        
+    public void UpdateRotation(float angle){
+        angleX += angle;
+        angleX = Mathf.Clamp(angleX, bottomAngle, topAngle);
+        transform.localRotation = Quaternion.Euler(angleX, 0, 0);
     }
 }
