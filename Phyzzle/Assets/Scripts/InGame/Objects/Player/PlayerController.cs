@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     // Components
     private Animator animator;
     private Rigidbody rigid;
+    private PlayerPhysics physics;
     
     // Status
     public bool isMovable{
@@ -15,7 +16,7 @@ public class PlayerController : MonoBehaviour
     }
     private Vector2 move = Vector2.zero;
     private float maxSpeed = 10.0f;
-    private float turnSpeed = 500.0f;
+    private float turnSpeed = 720.0f;
     private bool isAir = false;
     private Vector3 up = Vector3.up;
     public bool inverted{
@@ -56,6 +57,7 @@ public class PlayerController : MonoBehaviour
 
         // Components
         animator = GetComponent<Animator>();
+        physics = GetComponent<PlayerPhysics>();
         rigid = GetComponent<Rigidbody>();
 
         // Status
