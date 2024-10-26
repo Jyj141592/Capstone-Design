@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GravityButton : MonoBehaviour, IButtonAction
+public class MagneticButton : MonoBehaviour, IButtonAction
 {
     public List<PhysicsObject> objects = new List<PhysicsObject>();
-
+    public MagneticSystem magneticSystem;
     public void OnPressed(){
         for(int i = 0; i < objects.Count; i++){
-            objects[i].gravityInverted = !objects[i].gravityInverted;
+            magneticSystem.ToggleMagnetic(objects[i]);
         }
     }
     public void OnReleased(){
         for(int i = 0; i < objects.Count; i++){
-            objects[i].gravityInverted = !objects[i].gravityInverted;
+            magneticSystem.ToggleMagnetic(objects[i]);
         }
     }
 }

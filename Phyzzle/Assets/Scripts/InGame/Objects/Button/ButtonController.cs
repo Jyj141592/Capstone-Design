@@ -9,7 +9,7 @@ public class ButtonController : MonoBehaviour
     public Transform button;
     private float originalPos = 0.0f;
     private float pressedPos = -0.3f;
-    //private bool pressed = false;
+    private bool pressed = false;
     private bool isTweening = false;
     private Tween tween = null;
     private int contacted = 0;
@@ -23,7 +23,10 @@ public class ButtonController : MonoBehaviour
             tween = button.DOLocalMoveY(pressedPos, button.localPosition.y - pressedPos).OnComplete(() => {
                 //pressed = true;
                 isTweening = false;
-                buttonAction.OnPressed();
+                if(!pressed){
+                    buttonAction.OnPressed();
+                    pressed = true;
+                }
             });
         }
         contacted++;
@@ -35,9 +38,12 @@ public class ButtonController : MonoBehaviour
                 tween.Kill();
                 tween = null;
             }
+            if(pressed){
+                buttonAction.OnReleased();
+                pressed = false;
+            }
             isTweening = true;
             //pressed = false;
-            buttonAction.OnReleased();
             tween = button.DOLocalMoveY(originalPos, originalPos - button.localPosition.y).OnComplete(() => {
                 isTweening = false;
             });
