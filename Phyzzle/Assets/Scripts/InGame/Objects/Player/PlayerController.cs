@@ -33,14 +33,10 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveInput = Vector2.zero;
 
     // Camera
-    public CameraController cam;
+    private CameraController cam;
 
-    // Hold
-    // public Transform hand;
-    // private Collider hold = null;
-    // private PhysicsObject holdPhysics = null;
-    // private int handLayer;
-    // private int cubeLayer;
+    // Bow
+    private BowController bow;
 
     void Start()
     {
@@ -51,18 +47,17 @@ public class PlayerController : MonoBehaviour
         InputManager.instance.RegisterCallback(InputMap.InGame, "Hold", OnHold);
         InputManager.instance.RegisterCallback(InputMap.InGame, "Throw", OnThrow);
         InputManager.instance.RegisterCallback(InputMap.InGame, "ViewRotate", OnViewRotate);
+        InputManager.instance.RegisterCallback(InputMap.InGame, "Bow", OnBow);
+        InputManager.instance.RegisterCallback(InputMap.InGame, "Shoot", OnShoot);
         InputManager.instance.RegisterCallback(InputMap.InGame, "Touch", OnTouch);
 
         // Components
         physics = GetComponent<PlayerPhysics>();
+        cam = GetComponentInChildren<CameraController>();
+        bow = GetComponentInChildren<BowController>(true);
 
         // Hold
         hold = GetComponentInChildren<HoldObject>();
-
-        // Layer
-        // handLayer = LayerMask.NameToLayer("Hand");
-        // cubeLayer = LayerMask.NameToLayer("Cube");
-
     }
 
     void Update()
@@ -84,6 +79,8 @@ public class PlayerController : MonoBehaviour
             InputManager.instance.RemoveCallback(InputMap.InGame, "Hold", OnHold);
             InputManager.instance.RemoveCallback(InputMap.InGame, "Throw", OnThrow);
             InputManager.instance.RemoveCallback(InputMap.InGame, "ViewRotate", OnViewRotate);
+            InputManager.instance.RemoveCallback(InputMap.InGame, "Bow", OnBow);
+            InputManager.instance.RemoveCallback(InputMap.InGame, "Shoot", OnShoot);
             InputManager.instance.RemoveCallback(InputMap.InGame, "Touch", OnTouch);
         }
     }
@@ -123,28 +120,6 @@ public class PlayerController : MonoBehaviour
     public void OnHold(InputAction.CallbackContext context){
         if(context.started){
             hold.Hold();
-            // if(!isHold){
-            //     var colls = Physics.OverlapSphere(hand.position, 0.7f, 1 << cubeLayer);
-            //     if(colls.Length > 0){
-            //         isHold = true;
-            //         hold = colls[0];
-            //         holdPhysics = hold.GetComponent<PhysicsObject>();
-            //         holdPhysics.isKinematic = true;
-            //         //hold.attachedRigidbody.isKinematic = true;
-            //         //hold.gameObject.layer = handLayer;
-            //         hold.transform.SetParent(hand);
-            //         hold.transform.localPosition = Vector3.zero;
-            //     }
-            // }
-            // else{
-            //     hold.transform.SetParent(null);
-            //     //hold.gameObject.layer = cubeLayer;
-            //     holdPhysics.isKinematic = false;
-            //     holdPhysics = null;
-            //     //hold.attachedRigidbody.isKinematic = false;
-            //     hold = null;
-            //     isHold = false;
-            // }
         }
     }
     public void OnThrow(InputAction.CallbackContext context){
@@ -159,6 +134,19 @@ public class PlayerController : MonoBehaviour
             angleY += value.x * 0.3f;
             transform.rotation = Quaternion.Euler(0, angleY, 0);
             cam.UpdateRotation(-value.y * 0.3f);
+        }
+    }
+    public void OnBow(InputAction.CallbackContext context){
+        if(context.started){
+            bow.StartTarget();
+        }
+        else if(context.canceled){
+            bow.StopTarget();
+        }
+    }
+    public void OnShoot(InputAction.CallbackContext context){
+        if(context.started){
+            bow.Shoot();
         }
     }
     public void OnPush(InputAction.CallbackContext context){

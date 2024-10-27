@@ -49,4 +49,7 @@ public class PhysicsObject : MonoBehaviour
     public void SetVelocity(Vector3 velocity){
         rigid.velocity = velocity;
     }
+    public void SetMass(float mass){
+        rigid.mass = mass;
+    }
 }

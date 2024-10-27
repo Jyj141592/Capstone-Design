@@ -28,7 +28,7 @@ public class HoldObject : MonoBehaviour
                 holdPhysics = hold.GetComponent<PhysicsObject>();
                 holdPhysics.freezeRotation = true;
                 holdPhysics.isKinematic = true;
-                //hold.transform.position = transform.position;
+                hold.transform.position = transform.position;
 
                 if(attachObject != null){
                     StopCoroutine(attachObject);
