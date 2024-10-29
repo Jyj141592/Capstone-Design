@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
@@ -55,6 +56,7 @@ public class PlayerController : MonoBehaviour
         physics = GetComponent<PlayerPhysics>();
         cam = GetComponentInChildren<CameraController>();
         bow = GetComponentInChildren<BowController>(true);
+        bow.SetInventory(GetComponent<Inventory>());
 
         // Hold
         hold = GetComponentInChildren<HoldObject>();
@@ -84,6 +86,35 @@ public class PlayerController : MonoBehaviour
             InputManager.instance.RemoveCallback(InputMap.InGame, "Touch", OnTouch);
         }
     }
+
+    public void OnMove(InputCallback type, Vector2 direction){
+        if(type == InputCallback.canceled){
+            physics.SetMoveDirection(Vector3.zero);
+            cam.StopWalk();
+        }
+        moveInput = direction;
+    }
+    public void Jump(){
+        physics.AddForce(Vector3.up * 200, ForceMode.Impulse);
+    }
+    public void Hold(){
+        hold.Hold();
+    }
+    public void Throw(){
+        hold.Throw();
+    }
+    public void Bow(bool started){
+        if(started){
+            bow.StartTarget();
+        }
+        else{
+            bow.StopTarget();
+        }
+    }
+    public void Shoot(){
+        bow.Shoot();
+    }
+
     public void OnVertical(InputAction.CallbackContext context){
         if(context.started){
             if(moveInput == Vector2.zero) cam.Walk();
@@ -114,17 +145,17 @@ public class PlayerController : MonoBehaviour
     }
     public void OnJump(InputAction.CallbackContext context){
         if(context.started && !isAir){
-            physics.AddForce(Vector3.up * 1000);
+            Jump();
         }
     }
     public void OnHold(InputAction.CallbackContext context){
         if(context.started){
-            hold.Hold();
+            Hold();
         }
     }
     public void OnThrow(InputAction.CallbackContext context){
         if(context.started){
-            hold.Throw();
+            Throw();
         }
     }
     void OnViewRotate(InputAction.CallbackContext context){
@@ -137,12 +168,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     public void OnBow(InputAction.CallbackContext context){
-        if(context.started){
-            bow.StartTarget();
-        }
-        else if(context.canceled){
-            bow.StopTarget();
-        }
+        Bow(context.started);
     }
     public void OnShoot(InputAction.CallbackContext context){
         if(context.started){

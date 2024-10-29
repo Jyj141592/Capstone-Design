@@ -13,8 +13,10 @@ public class ExplosionButton : MonoBehaviour, IButtonAction
     public void OnPressed()
     {
         for(int i = 0; i < objects.Count; i++){
+            if(objects[i].isKinematic) continue;
             var colls = Physics.OverlapSphere(objects[i].transform.position, 5, mask);
             for(int j = 0; j < colls.Length; j++){
+                if(objects[j].isKinematic) continue;
                 PhysicsObject p = colls[j].GetComponent<PhysicsObject>();
                 if(p != null){
                     Vector3 dir = colls[j].transform.position - objects[i].transform.position;

@@ -22,10 +22,12 @@ public class MagneticSystem : MonoBehaviour
     }
     public void ToggleMagnetic(PhysicsObject obj){
         if(objects.Contains(obj)){
+            obj.magnetic = false;
             objects.Remove(obj);
         }
         else{
             objects.Add(obj);
+            obj.magnetic = true;
         }
     }
 }

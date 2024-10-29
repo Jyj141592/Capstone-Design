@@ -12,6 +12,9 @@ public class PhysicsObject : MonoBehaviour
     public bool gravityInverted{
         get; set;
     } = false;
+    public bool magnetic{
+        get; set;
+    } = false;
     public bool isKinematic{
         get; set;
     } = false;

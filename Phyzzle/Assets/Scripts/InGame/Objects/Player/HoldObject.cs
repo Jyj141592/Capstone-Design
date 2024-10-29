@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class HoldObject : MonoBehaviour
 {
+    public delegate void OnHoldChanged(bool hold);
+    public OnHoldChanged onHoldChanged;
     public bool isHold{
         get; private set;
     } = false;
@@ -28,6 +30,7 @@ public class HoldObject : MonoBehaviour
                 holdPhysics = hold.GetComponent<PhysicsObject>();
                 holdPhysics.freezeRotation = true;
                 holdPhysics.isKinematic = true;
+                holdPhysics.SetMass(0.2f);
                 hold.transform.position = transform.position;
 
                 if(attachObject != null){
@@ -35,6 +38,9 @@ public class HoldObject : MonoBehaviour
                     attachObject = null;
                 }
                 attachObject = StartCoroutine(AttachObject());
+                if(onHoldChanged != null){
+                    onHoldChanged(true);
+                }
             }
         }
     }
@@ -46,6 +52,7 @@ public class HoldObject : MonoBehaviour
         }
     }
     private void ReleaseHold(){
+        holdPhysics.SetMass(20);
         holdPhysics.isKinematic = false;
         holdPhysics.freezeRotation = false;
         holdPhysics = null;
@@ -54,6 +61,9 @@ public class HoldObject : MonoBehaviour
         if(attachObject != null){
             StopCoroutine(attachObject);
             attachObject = null;
+        }
+        if(onHoldChanged != null){
+            onHoldChanged(false);
         }
     }
 
