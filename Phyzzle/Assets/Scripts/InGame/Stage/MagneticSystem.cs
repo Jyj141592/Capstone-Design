@@ -13,7 +13,7 @@ public class MagneticSystem : MonoBehaviour
                     Vector3 dir = objects[i].transform.position - objects[j].transform.position;
                     dir.Normalize();
                     objects[j].AddMagneticForce(dir);
-                    objects[i].AddMagneticForce(-dir);
+                    objects[i].AddMagneticForce(dir * -1);
                 }
             }
         }

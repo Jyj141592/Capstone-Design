@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -7,6 +8,7 @@ public class PhysicsObject : MonoBehaviour
 {
     // Component
     protected Rigidbody rigid;
+    private Collider coll;
     
     // Status
     public bool gravityInverted{
@@ -15,6 +17,19 @@ public class PhysicsObject : MonoBehaviour
     public bool magnetic{
         get; set;
     } = false;
+    private bool _elasticity = false;
+    public bool elasticity{
+        get => _elasticity; 
+        set {
+            if(value){
+                coll.material = elasticMaterial;
+            }
+            else{
+                coll.material = idle;
+            }
+            _elasticity = value;
+        }
+    }
     public bool isKinematic{
         get; set;
     } = false;
@@ -26,12 +41,15 @@ public class PhysicsObject : MonoBehaviour
 
     private float gravity = -40.0f;
     private float impulse = 200.0f;
-    private float magneticValue = 700.0f;
+    private float magneticValue = 1000.0f;
     private Vector3 magneticForce = Vector3.zero;
+    public PhysicMaterial idle;
+    public PhysicMaterial elasticMaterial;
 
     public virtual void Start() {
         rigid = GetComponent<Rigidbody>();
         rigid.useGravity = false;
+        coll = GetComponent<Collider>();
     }
     public void AddForce(Vector3 force, ForceMode forceMode = ForceMode.Force){
         if(!isKinematic){
@@ -42,10 +60,10 @@ public class PhysicsObject : MonoBehaviour
     private void FixedUpdate() {
         if(!isKinematic){
             AddGravity();
-            if(magnetic){
-                rigid.AddForce(magneticForce);
-                magneticForce = Vector3.zero;
-            }
+            // if(magnetic){
+            //     rigid.AddForce(magneticForce);
+            //     magneticForce = Vector3.zero;
+            // }
         }
     }
     public void Explode(){
@@ -69,7 +87,10 @@ public class PhysicsObject : MonoBehaviour
         rigid.MovePosition(position);
     }
     public void AddMagneticForce(Vector3 direction){
-        magneticForce += direction * magneticValue;
+        if(!isKinematic){
+            //magneticForce += direction * magneticValue;
+            rigid.AddForce(direction * magneticValue);
+        }
     }
     public void SetVelocity(Vector3 velocity){
         rigid.velocity = velocity;
