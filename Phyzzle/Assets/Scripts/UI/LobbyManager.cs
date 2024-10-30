@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour
 {
+    public static int gameLevel;
+
     public GameObject mainPanel;
     public GameObject customPanel;
     public GameObject prefPanel;
@@ -56,5 +59,10 @@ public class LobbyManager : MonoBehaviour
     public void HidePopup()
     {
         popupPanel.SetActive(false);
+    }
+
+    public void StartGame(int level) {
+        gameLevel = level;
+        SceneManager.LoadScene("Test2");
     }
 }
