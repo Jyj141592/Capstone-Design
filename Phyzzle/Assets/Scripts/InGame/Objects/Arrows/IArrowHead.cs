@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IArrowHead
 {
     void OnHit(GameObject obj);
+    string GetArrowType();
 }

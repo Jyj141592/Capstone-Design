@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GravityHead : ArrowHead
+public class MagneticHead : ArrowHead
 {
+    public MagneticSystem magneticSystem = null;
     public override void OnHit(GameObject obj)
     {
+        if(magneticSystem == null) return;
         PhysicsObject physicsObject = obj.GetComponent<PhysicsObject>();
         if(physicsObject != null){
-            physicsObject.gravityInverted = !physicsObject.gravityInverted;
+            magneticSystem.ToggleMagnetic(physicsObject);
         }
     }
-    public override string GetArrowType(){
-        return "G";
+    public override string GetArrowType()
+    {
+        return "M";
     }
 }

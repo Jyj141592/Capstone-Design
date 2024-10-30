@@ -8,6 +8,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8364435433514861194, guid: 8aac1aa31ad12df4b999d2e0c4c43261,
+        type: 3}
+      propertyPath: head
+      value: 
+      objectReference: {fileID: 9103981685324311778}
     - target: {fileID: 4758983041359603776, guid: 8aac1aa31ad12df4b999d2e0c4c43261,
         type: 3}
       propertyPath: m_Name
@@ -152,3 +157,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6533629275577664354}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9103981685324311778 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -6558426132418613376, guid: 773d155b60f049146b023a6044724cf0,
+    type: 3}
+  m_PrefabInstance: {fileID: 6533629275577664354}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccdfb7dda30b2804ebb60b1004a9090a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

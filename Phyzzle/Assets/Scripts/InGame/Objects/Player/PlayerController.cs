@@ -114,6 +114,12 @@ public class PlayerController : MonoBehaviour
     public void Shoot(){
         bow.Shoot();
     }
+    public void ViewRotate(Vector2 value){
+        float angleY = transform.eulerAngles.y;
+        angleY += value.x * 0.3f;
+        transform.rotation = Quaternion.Euler(0, angleY, 0);
+        cam.UpdateRotation(-value.y * 0.3f);
+    }
 
     public void OnVertical(InputAction.CallbackContext context){
         if(context.started){
@@ -159,16 +165,18 @@ public class PlayerController : MonoBehaviour
         }
     }
     void OnViewRotate(InputAction.CallbackContext context){
-        if(context.performed){
-            Vector2 value = context.ReadValue<Vector2>();
-            float angleY = transform.eulerAngles.y;
-            angleY += value.x * 0.3f;
-            transform.rotation = Quaternion.Euler(0, angleY, 0);
-            cam.UpdateRotation(-value.y * 0.3f);
-        }
+        // if(context.performed){
+        //     Vector2 value = context.ReadValue<Vector2>();
+        //     ViewRotate(value);
+        // }
     }
     public void OnBow(InputAction.CallbackContext context){
-        Bow(context.started);
+        if(context.started){
+            Bow(true);
+        }
+        else if(context.canceled){
+            Bow(false);
+        }
     }
     public void OnShoot(InputAction.CallbackContext context){
         if(context.started){

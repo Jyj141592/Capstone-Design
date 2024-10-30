@@ -25,6 +25,9 @@ public class PhysicsObject : MonoBehaviour
     }
 
     private float gravity = -40.0f;
+    private float impulse = 200.0f;
+    private float magneticValue = 700.0f;
+    private Vector3 magneticForce = Vector3.zero;
 
     public virtual void Start() {
         rigid = GetComponent<Rigidbody>();
@@ -39,6 +42,22 @@ public class PhysicsObject : MonoBehaviour
     private void FixedUpdate() {
         if(!isKinematic){
             AddGravity();
+            if(magnetic){
+                rigid.AddForce(magneticForce);
+                magneticForce = Vector3.zero;
+            }
+        }
+    }
+    public void Explode(){
+        if(isKinematic) return;
+        var colls = Physics.OverlapSphere(transform.position, 5);
+        for(int j = 0; j < colls.Length; j++){
+            PhysicsObject p = colls[j].GetComponent<PhysicsObject>();
+            if(p != null){
+                Vector3 dir = colls[j].transform.position - transform.position;
+                dir.Normalize();
+                p.AddForce(dir * impulse, ForceMode.Impulse);
+            }
         }
     }
 
@@ -48,6 +67,9 @@ public class PhysicsObject : MonoBehaviour
     }
     public void Move(Vector3 position){
         rigid.MovePosition(position);
+    }
+    public void AddMagneticForce(Vector3 direction){
+        magneticForce += direction * magneticValue;
     }
     public void SetVelocity(Vector3 velocity){
         rigid.velocity = velocity;

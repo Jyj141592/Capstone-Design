@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
-    private IArrowHead head;
+    public ArrowHead head;
     private float arrowSpeed = 100.0f;
+    private bool isFlying = false;
     private Coroutine coroutine = null;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
+    private int playerLayer;
 
     private void Start() {
-        head = GetComponentInChildren<IArrowHead>();
+        //head = GetComponentInChildren<ArrowHead>();
+        playerLayer = LayerMask.NameToLayer("Player");
     }
     public void Shoot(){
+        isFlying = true;
         coroutine = StartCoroutine(Fly());
     }
 
@@ -24,12 +28,19 @@ public class ArrowController : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        head.OnHit(other.gameObject);
-        StopCoroutine(coroutine);
-        coroutine = null;
-        if(other.gameObject.layer == LayerMask.NameToLayer("Cube")){
-            transform.SetParent(other.transform);
+        if(isFlying){
+            if(other.gameObject.layer == playerLayer) return;
+            head.OnHit(other.gameObject);
+            StopCoroutine(coroutine);
+            coroutine = null;
+            if(other.gameObject.layer == LayerMask.NameToLayer("Cube")){
+                transform.SetParent(other.transform);
+            }
+            isFlying = false;
         }
+    }
+    public string GetArrowType(){
+        return head.GetArrowType();
     }
     public void SetActive(bool active){
         gameObject.SetActive(active);
