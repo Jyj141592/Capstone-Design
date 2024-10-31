@@ -13,6 +13,10 @@ public class MGTest : MonoBehaviour
     public Image pzImg3;
     public Image pzImg4;
     public Image pzImg5;
+    public Image pzImg6;
+    public Image pzImg7;
+    public Image pzImg8;
+    public Image pzImg9;
     public TMP_Text pzTxt1;
     public TMP_Text pzTxt2;
     public TMP_Text pzTxt3;
@@ -29,6 +33,10 @@ public class MGTest : MonoBehaviour
         pzImg3.enabled = false;
         pzImg4.enabled = false;
         pzImg5.enabled = false;
+        pzImg6.enabled = false;
+        pzImg7.enabled = false;
+        pzImg8.enabled = false;
+        pzImg9.enabled = false;
     }
 
     // Update is called once per frame
@@ -55,6 +63,10 @@ public class MGTest : MonoBehaviour
         pzImg3.enabled = true;
         pzImg4.enabled = true;
         pzImg5.enabled = true;
+        pzImg6.enabled = true;
+        pzImg7.enabled = true;
+        pzImg8.enabled = true;
+        pzImg9.enabled = true;
         pzTxt1.SetText("??");
         pzTxt2.SetText("??\n??");
         pzTxt3.SetText("??");
